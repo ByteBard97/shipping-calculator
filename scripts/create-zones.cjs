@@ -79,35 +79,37 @@ const zoneGroups = {
   }
 };
 
-// Create features for each zone by merging state geometries
-const features = Object.entries(zoneGroups).map(([zone_id, config]) => {
+// Create features - one feature per STATE with zone info
+const features = [];
+
+Object.entries(zoneGroups).forEach(([zone_id, config]) => {
   // Find all states in this zone
   const stateFeatures = statesData.features.filter(f =>
     config.states.includes(f.properties.name)
   );
 
-  // For simplicity, use the first state's geometry as the zone geometry
-  // In production, you'd use turf.js or similar to properly merge polygons
-  const geometry = stateFeatures.length > 0 ? stateFeatures[0].geometry : null;
-
-  return {
-    type: 'Feature',
-    properties: {
-      zone_id,
-      name: config.name,
-      states: config.states.join(', '),
-      multiplier: config.multiplier,
-      remote_fee: config.remote_fee,
-      description: `${config.name} - ${config.states.length} state(s)`
-    },
-    geometry
-  };
+  // Create a feature for each state with zone properties
+  stateFeatures.forEach(stateFeature => {
+    features.push({
+      type: 'Feature',
+      properties: {
+        zone_id,
+        name: config.name,
+        state_name: stateFeature.properties.name,
+        states: config.states.join(', '),
+        multiplier: config.multiplier,
+        remote_fee: config.remote_fee,
+        description: `${config.name} - ${stateFeature.properties.name}`
+      },
+      geometry: stateFeature.geometry
+    });
+  });
 });
 
 const zonesGeoJSON = {
   type: 'FeatureCollection',
-  features: features.filter(f => f.geometry !== null)
+  features
 };
 
 fs.writeFileSync('public/data/zones.geojson', JSON.stringify(zonesGeoJSON, null, 2));
-console.log('Created zones.geojson with real state boundaries');
+console.log(`Created zones.geojson with ${features.length} state features across 12 zones`);

@@ -1,48 +1,43 @@
 <template>
-  <v-container fluid class="pa-0 fill-height">
-    <v-row no-gutters class="fill-height">
-      <v-col cols="12" md="7" class="map-col">
-        <div class="pa-2">
-          <v-card>
-            <v-card-title class="d-flex align-center">
-              <span>Zone Map</span>
-              <v-spacer></v-spacer>
-              <v-switch
-                v-model="showHeatmap"
-                label="Heatmap"
-                color="primary"
-                hide-details
-                density="compact"
-              ></v-switch>
-            </v-card-title>
-            <v-card-text class="pa-0">
-              <ZoneMap :show-heatmap="showHeatmap" @zone-picked="handleZonePicked" />
-            </v-card-text>
-          </v-card>
+  <div class="estimator-layout">
+    <!-- Map fills entire space -->
+    <div class="map-section">
+      <div class="map-header">
+        <v-switch
+          v-model="showHeatmap"
+          label="Heatmap"
+          color="primary"
+          hide-details
+          density="compact"
+          class="ml-4"
+        ></v-switch>
+      </div>
+      <ZoneMap :show-heatmap="showHeatmap" @zone-picked="handleZonePicked" />
 
-          <v-alert v-if="origin || dest" type="info" class="mt-2" closable>
-            <div v-if="origin && !dest">
-              Origin: <v-chip size="small" color="primary">{{ getZoneName(origin) }}</v-chip>
-              <span class="ml-2">Click another zone for destination</span>
-            </div>
-            <div v-else-if="origin && dest">
-              Origin: <v-chip size="small" color="primary">{{ getZoneName(origin) }}</v-chip>
-              →
-              Dest: <v-chip size="small" color="success">{{ getZoneName(dest) }}</v-chip>
-              <v-btn size="small" variant="text" @click="resetZones" class="ml-2">Reset</v-btn>
-            </div>
-          </v-alert>
+      <!-- Floating zone selection alert -->
+      <v-alert v-if="origin || dest" type="info" class="zone-alert" closable>
+        <div v-if="origin && !dest">
+          Origin: <v-chip size="small" color="primary">{{ getZoneName(origin) }}</v-chip>
+          <span class="ml-2">Click another zone for destination</span>
         </div>
-      </v-col>
+        <div v-else-if="origin && dest">
+          Origin: <v-chip size="small" color="primary">{{ getZoneName(origin) }}</v-chip>
+          →
+          Dest: <v-chip size="small" color="success">{{ getZoneName(dest) }}</v-chip>
+          <v-btn size="small" variant="text" @click="resetZones" class="ml-2">Reset</v-btn>
+        </div>
+      </v-alert>
+    </div>
 
-      <v-col cols="12" md="5">
-        <div class="pa-2">
-          <EstimatorForm :origin="origin" :dest="dest" />
-          <PriceBreakdown :result="quotesStore.currentQuote" />
-        </div>
-      </v-col>
-    </v-row>
-  </v-container>
+    <!-- Floating form panel (bottom right) -->
+    <v-card class="form-panel" elevation="8">
+      <v-card-title class="text-h6 bg-primary">Shipment Details</v-card-title>
+      <v-card-text class="pa-3">
+        <EstimatorForm :origin="origin" :dest="dest" />
+        <PriceBreakdown :result="quotesStore.currentQuote" />
+      </v-card-text>
+    </v-card>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -89,11 +84,52 @@ function getZoneName(zoneId: string): string {
 </script>
 
 <style scoped>
-.fill-height {
+.estimator-layout {
+  position: relative;
+  width: 100%;
   height: calc(100vh - 64px);
+  overflow: hidden;
 }
 
-.map-col {
+.map-section {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.map-header {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 8px 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.zone-alert {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  max-width: 600px;
+}
+
+.form-panel {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  z-index: 10;
+  width: 420px;
+  max-height: calc(100vh - 140px);
+  overflow-y: auto;
+}
+
+/* Make form panel scrollable */
+.form-panel :deep(.v-card-text) {
+  max-height: calc(100vh - 200px);
   overflow-y: auto;
 }
 </style>

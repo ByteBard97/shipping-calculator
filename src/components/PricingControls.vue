@@ -2,7 +2,7 @@
   <div class="pa-4">
     <v-card-title class="px-0">Pricing Controls</v-card-title>
 
-    <v-expansion-panels multiple>
+    <v-expansion-panels multiple class="slider-panels">
       <v-expansion-panel>
         <v-expansion-panel-title>
           <v-icon start>mdi-currency-usd</v-icon>
@@ -29,7 +29,7 @@
               <v-text-field
                 v-model.number="pricingStore.per_mile"
                 type="number"
-                style="width: 80px"
+                step="0.01"
                 density="compact"
                 hide-details
               ></v-text-field>
@@ -48,7 +48,6 @@
               <v-text-field
                 v-model.number="pricingStore.per_lb"
                 type="number"
-                style="width: 80px"
                 density="compact"
                 hide-details
               ></v-text-field>
@@ -75,7 +74,6 @@
               <v-text-field
                 v-model.number="pricingStore.dim_divisor"
                 type="number"
-                style="width: 80px"
                 density="compact"
                 hide-details
               ></v-text-field>
@@ -102,7 +100,6 @@
               <v-text-field
                 v-model.number="pricingStore.fuel_pct"
                 type="number"
-                style="width: 80px"
                 density="compact"
                 hide-details
               ></v-text-field>
@@ -121,7 +118,6 @@
               <v-text-field
                 v-model.number="pricingStore.peak_pct"
                 type="number"
-                style="width: 80px"
                 density="compact"
                 hide-details
               ></v-text-field>
@@ -148,7 +144,6 @@
               <v-text-field
                 v-model.number="pricingStore.residential_fee"
                 type="number"
-                style="width: 80px"
                 density="compact"
                 hide-details
               ></v-text-field>
@@ -175,7 +170,6 @@
               <v-text-field
                 v-model.number="pricingStore.service_multiplier_standard"
                 type="number"
-                style="width: 80px"
                 density="compact"
                 hide-details
               ></v-text-field>
@@ -194,7 +188,6 @@
               <v-text-field
                 v-model.number="pricingStore.service_multiplier_expedited"
                 type="number"
-                style="width: 80px"
                 density="compact"
                 hide-details
               ></v-text-field>
@@ -221,7 +214,6 @@
               <v-text-field
                 v-model.number="pricingStore.confidencePct"
                 type="number"
-                style="width: 80px"
                 density="compact"
                 hide-details
               ></v-text-field>
@@ -238,3 +230,26 @@ import { usePricingStore } from '@/stores/usePricingStore'
 
 const pricingStore = usePricingStore()
 </script>
+
+<style scoped>
+.slider-panels :deep(.v-slider) {
+  margin-bottom: 16px;
+}
+
+.slider-panels :deep(.v-input__append) {
+  margin-inline-start: 8px !important;
+  min-width: 70px;
+  max-width: 70px;
+}
+
+.slider-panels :deep(.v-input__append .v-text-field) {
+  width: 70px !important;
+  min-width: 70px !important;
+  max-width: 70px !important;
+}
+
+.slider-panels :deep(.v-input__append .v-field__input) {
+  padding: 0 8px !important;
+  min-height: 32px !important;
+}
+</style>

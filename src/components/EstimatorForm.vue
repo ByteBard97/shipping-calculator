@@ -1,8 +1,5 @@
 <template>
-  <v-card>
-    <v-card-title>Shipment Details</v-card-title>
-    <v-card-text>
-      <v-form @submit.prevent="calculate">
+  <v-form @submit.prevent="calculate">
         <v-row>
           <v-col cols="12" md="6">
             <v-select
@@ -88,9 +85,7 @@
         </v-row>
 
         <v-btn type="submit" color="primary" block>Calculate Price</v-btn>
-      </v-form>
-    </v-card-text>
-  </v-card>
+  </v-form>
 </template>
 
 <script setup lang="ts">
