@@ -20,7 +20,8 @@ export const usePricingStore = defineStore('pricing', () => {
 
   async function loadPresets() {
     try {
-      const response = await fetch('/data/presets.json')
+      const base = import.meta.env.BASE_URL
+      const response = await fetch(`${base}data/presets.json`)
       presets.value = await response.json()
       if (presets.value.length > 0) {
         applyPreset(presets.value[0])

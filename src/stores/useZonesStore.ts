@@ -12,7 +12,8 @@ export const useZonesStore = defineStore('zones', () => {
     loading.value = true
     error.value = null
     try {
-      const response = await fetch('/data/zones.geojson')
+      const base = import.meta.env.BASE_URL
+      const response = await fetch(`${base}data/zones.geojson`)
       zones.value = await response.json()
     } catch (e) {
       error.value = 'Failed to load zones'
@@ -24,7 +25,8 @@ export const useZonesStore = defineStore('zones', () => {
 
   async function loadMatrix() {
     try {
-      const response = await fetch('/data/matrix.json')
+      const base = import.meta.env.BASE_URL
+      const response = await fetch(`${base}data/matrix.json`)
       matrix.value = await response.json()
     } catch (e) {
       console.error('Failed to load distance matrix', e)
