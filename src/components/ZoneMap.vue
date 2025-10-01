@@ -96,21 +96,7 @@ function initMap() {
       }
     })
 
-    // Add labels
-    map.addLayer({
-      id: 'zones-labels',
-      type: 'symbol',
-      source: 'zones',
-      layout: {
-        'text-field': ['get', 'name'],
-        'text-size': 12
-      },
-      paint: {
-        'text-color': '#000',
-        'text-halo-color': '#fff',
-        'text-halo-width': 2
-      }
-    })
+    // Add labels (removed - requires glyphs/font configuration)
 
     // Click handler
     map.on('click', 'zones-fill', (e) => {

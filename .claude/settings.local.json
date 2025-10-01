@@ -4,7 +4,9 @@
       "Bash(npm create:*)",
       "Bash(npm install)",
       "Bash(npm run build:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(curl:*)",
+      "WebSearch"
     ],
     "deny": [],
     "ask": []
