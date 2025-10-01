@@ -29,9 +29,21 @@
       </v-alert>
     </div>
 
-    <!-- Floating form panel (bottom right) -->
-    <v-card class="form-panel" elevation="8">
-      <v-card-title class="text-h6 bg-primary">Shipment Details</v-card-title>
+    <!-- Floating form panel (draggable) -->
+    <v-card
+      ref="formPanel"
+      class="form-panel"
+      elevation="8"
+      :style="{ left: panelPosition.x + 'px', top: panelPosition.y + 'px' }"
+    >
+      <v-card-title
+        class="text-h6 bg-primary drag-handle"
+        @mousedown="startDrag"
+        style="cursor: move; user-select: none;"
+      >
+        <v-icon start size="small">mdi-drag</v-icon>
+        Shipment Details
+      </v-card-title>
       <v-card-text class="pa-3">
         <EstimatorForm :origin="origin" :dest="dest" />
         <PriceBreakdown :result="quotesStore.currentQuote" />
@@ -41,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import ZoneMap from '@/components/ZoneMap.vue'
 import EstimatorForm from '@/components/EstimatorForm.vue'
 import PriceBreakdown from '@/components/PriceBreakdown.vue'
@@ -56,9 +68,58 @@ const quotesStore = useQuotesStore()
 const origin = ref<string>()
 const dest = ref<string>()
 const showHeatmap = ref(true)
+const formPanel = ref<HTMLElement>()
+
+// Draggable panel state
+const panelPosition = ref({ x: 0, y: 0 })
+const isDragging = ref(false)
+const dragOffset = ref({ x: 0, y: 0 })
+
+// Initialize panel position (bottom right, accounting for drawers)
+onMounted(() => {
+  const viewportWidth = window.innerWidth
+  const viewportHeight = window.innerHeight
+  const rightDrawerWidth = 280 // Right presets drawer
+  const panelWidth = 420
+  const margin = 24
+
+  panelPosition.value = {
+    x: viewportWidth - rightDrawerWidth - panelWidth - margin,
+    y: Math.max(100, viewportHeight - 550) // Start higher up, min 100px from top
+  }
+})
 
 onMounted(async () => {
   await pricingStore.loadPresets()
+})
+
+function startDrag(e: MouseEvent) {
+  isDragging.value = true
+  dragOffset.value = {
+    x: e.clientX - panelPosition.value.x,
+    y: e.clientY - panelPosition.value.y
+  }
+  document.addEventListener('mousemove', onDrag)
+  document.addEventListener('mouseup', stopDrag)
+}
+
+function onDrag(e: MouseEvent) {
+  if (!isDragging.value) return
+  panelPosition.value = {
+    x: e.clientX - dragOffset.value.x,
+    y: e.clientY - dragOffset.value.y
+  }
+}
+
+function stopDrag() {
+  isDragging.value = false
+  document.removeEventListener('mousemove', onDrag)
+  document.removeEventListener('mouseup', stopDrag)
+}
+
+onUnmounted(() => {
+  document.removeEventListener('mousemove', onDrag)
+  document.removeEventListener('mouseup', stopDrag)
 })
 
 function handleZonePicked(zoneId: string) {
@@ -118,13 +179,16 @@ function getZoneName(zoneId: string): string {
 }
 
 .form-panel {
-  position: absolute;
-  bottom: 24px;
-  right: 24px;
+  position: fixed;
   z-index: 10;
   width: 420px;
   max-height: calc(100vh - 140px);
   overflow-y: auto;
+  transition: box-shadow 0.3s ease;
+}
+
+.form-panel:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3) !important;
 }
 
 /* Make form panel scrollable */

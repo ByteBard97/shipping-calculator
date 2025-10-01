@@ -84,7 +84,6 @@
           </v-col>
         </v-row>
 
-        <v-btn type="submit" color="primary" block>Calculate Price</v-btn>
   </v-form>
 </template>
 
@@ -115,10 +114,17 @@ const form = reactive<Shipment>({
 })
 
 const zoneOptions = computed(() => {
-  return zonesStore.zones?.features.map(f => ({
-    title: f.properties.name,
-    value: f.properties.zone_id
-  })) ?? []
+  // Get unique zones by zone_id
+  const uniqueZones = new Map()
+  zonesStore.zones?.features.forEach(f => {
+    if (!uniqueZones.has(f.properties.zone_id)) {
+      uniqueZones.set(f.properties.zone_id, {
+        title: f.properties.name,
+        value: f.properties.zone_id
+      })
+    }
+  })
+  return Array.from(uniqueZones.values())
 })
 
 const serviceOptions = [
