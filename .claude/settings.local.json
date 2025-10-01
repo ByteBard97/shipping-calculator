@@ -6,7 +6,11 @@
       "Bash(npm run build:*)",
       "Bash(cat:*)",
       "Bash(curl:*)",
-      "WebSearch"
+      "WebSearch",
+      "WebFetch(domain:www.census.gov)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Read(//tmp/**)",
+      "Bash(node:*)"
     ],
     "deny": [],
     "ask": []
