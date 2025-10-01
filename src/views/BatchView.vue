@@ -28,7 +28,7 @@
                     <div class="text-caption">Total Price</div>
                   </v-col>
                   <v-col cols="6" md="3">
-                    <div class="text-h4">${{{ summary.avgPrice.toFixed(2) }}</div>
+                    <div class="text-h4">${{ summary.avgPrice.toFixed(2) }}</div>
                     <div class="text-caption">Average Price</div>
                   </v-col>
                   <v-col cols="6" md="3" v-if="summary.avgError !== null">

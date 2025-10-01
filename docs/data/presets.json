@@ -1,0 +1,34 @@
+[
+  {
+    "id": "standard-v1",
+    "label": "Standard v1",
+    "base_rate": 4.00,
+    "per_mile": 0.25,
+    "per_lb": 0.30,
+    "dim_divisor": 139,
+    "fuel_pct": 12,
+    "service_multiplier": {
+      "standard": 1.0,
+      "expedited": 1.35
+    },
+    "zone_multiplier_overrides": {},
+    "residential_fee": 3.5,
+    "peak_pct": 0
+  },
+  {
+    "id": "peak-season",
+    "label": "Peak Season",
+    "base_rate": 4.50,
+    "per_mile": 0.28,
+    "per_lb": 0.35,
+    "dim_divisor": 139,
+    "fuel_pct": 15,
+    "service_multiplier": {
+      "standard": 1.0,
+      "expedited": 1.45
+    },
+    "zone_multiplier_overrides": {},
+    "residential_fee": 4.0,
+    "peak_pct": 8
+  }
+]

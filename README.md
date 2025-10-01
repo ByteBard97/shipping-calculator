@@ -105,11 +105,31 @@ quote_price, diff_abs, diff_pct
 
 ## Deployment
 
-Deploy to any static host (Netlify, Vercel, GitHub Pages):
+### GitHub Pages (Pre-configured)
+
+This project is configured to build into the `docs/` folder for GitHub Pages:
 
 ```bash
 npm run build
-# Upload dist/ folder
+git add docs/
+git commit -m "Deploy to GitHub Pages"
+git push
+```
+
+Then in GitHub repo settings:
+1. Go to **Settings** → **Pages**
+2. Source: **Deploy from a branch**
+3. Branch: **main** → **/docs** → Save
+
+Your app will be live at: `https://YOUR-USERNAME.github.io/shipping-calculator/`
+
+### Other Hosting Options
+
+Deploy to Netlify, Vercel, etc.:
+
+```bash
+npm run build
+# Upload docs/ folder to your provider
 ```
 
 ## License
