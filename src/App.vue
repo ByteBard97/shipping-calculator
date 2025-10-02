@@ -33,7 +33,9 @@
 
     <template v-else-if="!isScanner">
       <v-app-bar color="primary">
-        <v-toolbar-title>Joseph's Guinea Pig Hay Co.</v-toolbar-title>
+        <v-toolbar-title style="cursor: pointer;" @click="$router.push('/')">
+          Joseph's Guinea Pig Hay Co.
+        </v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn icon @click="toggleTheme">
           <v-icon>{{ theme.global.current.value.dark ? 'mdi-white-balance-sunny' : 'mdi-weather-night' }}</v-icon>
@@ -64,6 +66,7 @@ const isScanner = computed(() => route.path === '/scanner')
 const isShippingApp = computed(() => route.path.startsWith('/shipping'))
 
 function toggleTheme() {
-  theme.global.name.value = theme.global.current.value.dark ? 'light' : 'dark'
+  const newTheme = theme.global.current.value.dark ? 'light' : 'dark'
+  theme.global.name.value = newTheme
 }
 </script>

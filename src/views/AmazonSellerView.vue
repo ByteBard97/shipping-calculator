@@ -48,7 +48,7 @@
                     hide-details
                     class="mr-4"
                   ></v-text-field>
-                  <v-btn color="primary" prepend-icon="mdi-plus">
+                  <v-btn color="primary" prepend-icon="mdi-plus" @click="openAddProductDialog">
                     Add Product
                   </v-btn>
                 </div>
@@ -321,6 +321,103 @@
         </v-card>
       </v-col>
     </v-row>
+
+    <!-- Add Product Dialog -->
+    <v-dialog v-model="addProductDialog" max-width="800">
+      <v-card>
+        <v-card-title class="d-flex align-center">
+          <v-icon class="mr-2">mdi-package-variant-plus</v-icon>
+          Add New Product
+        </v-card-title>
+        <v-card-text>
+          <v-form ref="productForm">
+            <v-row>
+              <v-col cols="12" md="6">
+                <v-text-field
+                  v-model="newProduct.sku"
+                  label="SKU *"
+                  variant="outlined"
+                  hint="Unique product identifier"
+                  persistent-hint
+                  :rules="[(v: any) => !!v || 'SKU is required']"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" md="6">
+                <v-text-field
+                  v-model="newProduct.brand"
+                  label="Brand *"
+                  variant="outlined"
+                  :rules="[(v: any) => !!v || 'Brand is required']"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12">
+                <v-text-field
+                  v-model="newProduct.title"
+                  label="Product Title *"
+                  variant="outlined"
+                  hint="e.g., Happy Haystack - Premium Timothy Hay 5lb"
+                  persistent-hint
+                  :rules="[(v: any) => !!v || 'Title is required']"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" md="6">
+                <v-text-field
+                  v-model.number="newProduct.price"
+                  label="Price *"
+                  variant="outlined"
+                  type="number"
+                  step="0.01"
+                  prefix="$"
+                  :rules="[(v: any) => v > 0 || 'Price must be greater than 0']"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" md="6">
+                <v-text-field
+                  v-model.number="newProduct.quantity"
+                  label="Quantity *"
+                  variant="outlined"
+                  type="number"
+                  hint="Available inventory"
+                  persistent-hint
+                  :rules="[(v: any) => v >= 0 || 'Quantity must be 0 or greater']"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" md="6">
+                <v-text-field
+                  v-model="newProduct.asin"
+                  label="ASIN"
+                  variant="outlined"
+                  hint="Leave blank for new product"
+                  persistent-hint
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" md="6">
+                <v-select
+                  v-model="newProduct.status"
+                  label="Status *"
+                  :items="['active', 'pending', 'inactive']"
+                  variant="outlined"
+                ></v-select>
+              </v-col>
+              <v-col cols="12">
+                <v-text-field
+                  v-model="newProduct.image"
+                  label="Image URL"
+                  variant="outlined"
+                  hint="URL to product image"
+                  persistent-hint
+                ></v-text-field>
+              </v-col>
+            </v-row>
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn variant="text" @click="closeAddProductDialog">Cancel</v-btn>
+          <v-btn color="primary" @click="addProduct">Add Product</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -332,6 +429,19 @@ import hayHavenProductImage from '/hay-haven-product.webp'
 const tab = ref('products')
 const search = ref('')
 const csvFile = ref<File[]>([])
+const addProductDialog = ref(false)
+const productForm = ref(null)
+
+const newProduct = ref({
+  sku: '',
+  title: '',
+  brand: '',
+  price: 0,
+  quantity: 0,
+  status: 'pending',
+  asin: '',
+  image: hayProductImage
+})
 
 // Sample data for demo
 const products = ref([
@@ -401,5 +511,46 @@ const storeManager = ref({
 function handleFileUpload() {
   // TODO: Parse CSV and populate importPreview
   console.log('File uploaded:', csvFile.value)
+}
+
+function openAddProductDialog() {
+  addProductDialog.value = true
+}
+
+function closeAddProductDialog() {
+  addProductDialog.value = false
+  resetNewProduct()
+}
+
+function resetNewProduct() {
+  newProduct.value = {
+    sku: '',
+    title: '',
+    brand: '',
+    price: 0,
+    quantity: 0,
+    status: 'pending',
+    asin: '',
+    image: hayProductImage
+  }
+}
+
+function addProduct() {
+  if (!newProduct.value.sku || !newProduct.value.title || !newProduct.value.brand || newProduct.value.price <= 0) {
+    return
+  }
+
+  products.value.push({
+    sku: newProduct.value.sku,
+    title: newProduct.value.title,
+    brand: newProduct.value.brand,
+    price: newProduct.value.price,
+    quantity: newProduct.value.quantity,
+    status: newProduct.value.status,
+    asin: newProduct.value.asin,
+    image: newProduct.value.image || hayProductImage
+  })
+
+  closeAddProductDialog()
 }
 </script>
