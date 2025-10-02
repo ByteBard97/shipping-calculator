@@ -2,7 +2,6 @@
   <div class="scanner-fullscreen">
     <!-- Camera view fills entire screen -->
     <video ref="videoElement" autoplay playsinline @click="handleTapToFocus"></video>
-    <canvas ref="canvasElement" class="scanner-overlay"></canvas>
     <svg ref="overlayElement" class="detection-overlay">
       <polygon
         v-if="detectionPoints"
@@ -85,7 +84,6 @@ interface Package {
 }
 
 const videoElement = ref<HTMLVideoElement>()
-const canvasElement = ref<HTMLCanvasElement>()
 const overlayElement = ref<SVGElement>()
 const isScanning = ref(false)
 const lastScanned = ref<string>()
@@ -100,6 +98,7 @@ const videoResolution = ref('N/A')
 const focusMode = ref('N/A')
 
 const codeReader = new BrowserMultiFormatReader()
+
 let stream: MediaStream | null = null
 let scanInterval: number | null = null
 let videoTrack: MediaStreamTrack | null = null
@@ -117,7 +116,8 @@ async function startScanning() {
     stream = await navigator.mediaDevices.getUserMedia({
       video: {
         facingMode: 'environment', // Use rear camera on phones
-        advanced: [{ focusMode: 'continuous' }] as any
+        width: { ideal: 1920 },
+        height: { ideal: 1080 }
       }
     })
 
@@ -142,10 +142,28 @@ async function startScanning() {
       // Reset scan counter
       scanCount.value = 0
 
-      // Start scanning loop
-      scanInterval = window.setInterval(async () => {
-        await scanFrame()
-      }, 300) // Scan every 300ms
+      // Use ZXing's built-in continuous decode from video
+      codeReader.decodeFromVideoDevice(null, videoElement.value, (result, _error) => {
+        scanCount.value++
+        const now = new Date()
+        lastScanTime.value = now.toLocaleTimeString()
+
+        if (result) {
+          // Get the corner points of the detected barcode
+          const points = result.getResultPoints()
+          if (points && points.length > 0) {
+            // Convert points to SVG polygon format
+            const pointsStr = points.map((p: any) => `${p.getX()},${p.getY()}`).join(' ')
+            detectionPoints.value = pointsStr
+          }
+          handleBarcode(result.getText())
+
+          // Clear detection box after 2 seconds
+          setTimeout(() => {
+            detectionPoints.value = undefined
+          }, 2000)
+        }
+      })
     }
   } catch (error) {
     console.error('Error accessing camera:', error)
@@ -154,6 +172,8 @@ async function startScanning() {
 }
 
 function stopScanning() {
+  codeReader.reset()
+
   if (scanInterval) {
     clearInterval(scanInterval)
     scanInterval = null
@@ -165,53 +185,6 @@ function stopScanning() {
   }
 
   isScanning.value = false
-}
-
-
-async function scanFrame() {
-  if (!videoElement.value || !canvasElement.value || !overlayElement.value) return
-
-  const canvas = canvasElement.value
-  const video = videoElement.value
-  const svg = overlayElement.value
-
-  canvas.width = video.videoWidth
-  canvas.height = video.videoHeight
-  svg.setAttribute('viewBox', `0 0 ${video.videoWidth} ${video.videoHeight}`)
-
-  const ctx = canvas.getContext('2d')
-  if (!ctx) return
-
-  ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
-
-  // Update debug info
-  scanCount.value++
-  const now = new Date()
-  lastScanTime.value = now.toLocaleTimeString()
-
-  try {
-    const result = await codeReader.decodeFromImageElement(canvas as any)
-    if (result) {
-      // Get the corner points of the detected barcode
-      const points = result.getResultPoints()
-      if (points && points.length > 0) {
-        // Convert points to SVG polygon format
-        const pointsStr = points.map((p: any) => `${p.getX()},${p.getY()}`).join(' ')
-        detectionPoints.value = pointsStr
-      }
-      handleBarcode(result.getText())
-
-      // Clear detection box after 2 seconds
-      setTimeout(() => {
-        detectionPoints.value = undefined
-      }, 2000)
-    } else {
-      detectionPoints.value = undefined
-    }
-  } catch (error) {
-    // No barcode detected in this frame, continue scanning
-    detectionPoints.value = undefined
-  }
 }
 
 function handleBarcode(barcode: string) {
