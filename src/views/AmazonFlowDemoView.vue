@@ -109,38 +109,36 @@
         <v-card>
           <v-card-title>Time Savings Breakdown</v-card-title>
           <v-card-text>
-            <v-simple-table>
-              <template v-slot:default>
-                <thead>
-                  <tr>
-                    <th>Task</th>
-                    <th>Seller Central</th>
-                    <th>Our Tool</th>
-                    <th>Savings</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Add 1 product (5 variations)</td>
-                    <td>2 hours</td>
-                    <td>5 minutes</td>
-                    <td class="text-success font-weight-bold">24x faster</td>
-                  </tr>
-                  <tr>
-                    <td>Update 20 products</td>
-                    <td>3+ hours</td>
-                    <td>10 minutes</td>
-                    <td class="text-success font-weight-bold">18x faster</td>
-                  </tr>
-                  <tr>
-                    <td>Fix validation errors</td>
-                    <td>1 hour (trial & error)</td>
-                    <td>5 minutes (clear hints)</td>
-                    <td class="text-success font-weight-bold">12x faster</td>
-                  </tr>
-                </tbody>
-              </template>
-            </v-simple-table>
+            <v-table>
+              <thead>
+                <tr>
+                  <th>Task</th>
+                  <th>Seller Central</th>
+                  <th>Our Tool</th>
+                  <th>Savings</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Add 1 product (5 variations)</td>
+                  <td>2 hours</td>
+                  <td>5 minutes</td>
+                  <td class="text-success font-weight-bold">24x faster</td>
+                </tr>
+                <tr>
+                  <td>Update 20 products</td>
+                  <td>3+ hours</td>
+                  <td>10 minutes</td>
+                  <td class="text-success font-weight-bold">18x faster</td>
+                </tr>
+                <tr>
+                  <td>Fix validation errors</td>
+                  <td>1 hour (trial & error)</td>
+                  <td>5 minutes (clear hints)</td>
+                  <td class="text-success font-weight-bold">12x faster</td>
+                </tr>
+              </tbody>
+            </v-table>
           </v-card-text>
         </v-card>
       </v-col>
