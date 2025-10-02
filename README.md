@@ -167,26 +167,67 @@ npm run build
 
 #### Running the App
 
-**Just double-click `start.bat`**
+You have TWO options:
 
-That's it! The app will:
-- Start the server
-- Open in your browser automatically
-- Be ready to use in about 5 seconds
+**Option 1: Browser Mode (Easier)**
+- Double-click `start.bat`
+- Opens in your web browser
+- Works immediately
+
+**Option 2: Desktop App Mode (More Professional)**
+- Double-click `start-desktop.bat`
+- Opens as a standalone Windows application (not in browser)
+- Looks like a real desktop program
+- First time will take 1-2 minutes to compile (Rust needs to build)
+- After that, starts instantly
+
+Both modes do the same thing - pick whichever you prefer!
 
 #### Stopping the App
 
-Close the command prompt window that appears, or press Ctrl+C in the terminal.
+- **Browser Mode**: Close the command prompt window, or press Ctrl+C
+- **Desktop Mode**: Just close the app window like any other program
 
 ### What You Can Do
 
-- **Products Tab**: Manage your product listings
+- **Products Tab**:
+  - **Sync from Amazon**: Click the "Sync from Amazon" button to pull in your existing products
+  - If you have a `.credentials` file, it will fetch your real Amazon listings
+  - Without credentials, it uses mock data for testing
+  - Manage your product listings, prices, and inventory
+
 - **Analytics & Tools Tab**: This is where the magic happens!
   - **Profit Margin Calculator**: See exactly what you make after all Amazon fees
-  - **Competitor Price Tracker**: Compare your prices to competitors
+  - **Competitor Price Tracker**: Compare your prices to competitors (mock data for now)
   - **Seasonal Pricing**: Get pricing recommendations by season
   - **Bundle Creator**: Create product bundles with automatic pricing
-  - **Inventory Forecast**: Know exactly when to reorder
+  - **Inventory Forecast**: Know exactly when to reorder based on sales velocity
+
+### Syncing Your Real Amazon Products
+
+The app can pull in your existing Amazon listings!
+
+**Without Credentials (Works Now)**:
+- App uses mock data automatically
+- All features work for testing
+- No setup required
+
+**With Real Amazon Data**:
+1. Get Amazon SP-API credentials (see `AMAZON_SYNC_SETUP.md` for detailed guide)
+2. Create a `.credentials` file (copy from `.credentials.example`)
+3. Fill in your Client ID, Client Secret, and Refresh Token
+4. Click "Sync from Amazon" button in the Products tab
+5. Your real products load automatically!
+
+**What Gets Synced**:
+- ✅ Product SKUs, Titles, Brands
+- ✅ Prices and Inventory quantities
+- ✅ ASINs and Product images
+- ✅ Active/Inactive status
+
+**Sandbox vs Production**:
+- Start with `"mode": "sandbox"` (safe testing, won't affect real listings)
+- Switch to `"mode": "production"` when ready (be careful!)
 
 ### Your Credentials Are Safe
 

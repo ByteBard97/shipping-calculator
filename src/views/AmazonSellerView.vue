@@ -39,6 +39,10 @@
             <!-- Products Tab -->
             <v-window-item value="products">
               <v-card-text>
+                <v-alert v-if="syncStatus" :type="syncStatus.type" variant="tonal" closable class="mb-4">
+                  {{ syncStatus.message }}
+                </v-alert>
+
                 <div class="d-flex align-center mb-4">
                   <v-text-field
                     v-model="search"
@@ -49,6 +53,15 @@
                     hide-details
                     class="mr-4"
                   ></v-text-field>
+                  <v-btn
+                    color="info"
+                    prepend-icon="mdi-sync"
+                    @click="syncWithAmazon"
+                    :loading="syncing"
+                    class="mr-2"
+                  >
+                    Sync from Amazon
+                  </v-btn>
                   <v-btn color="primary" prepend-icon="mdi-plus" @click="openAddProductDialog">
                     Add Product
                   </v-btn>
@@ -488,12 +501,15 @@ import CompetitorPriceTracker from '@/components/CompetitorPriceTracker.vue'
 import SeasonalPricingSuggestions from '@/components/SeasonalPricingSuggestions.vue'
 import BundleProductCreator from '@/components/BundleProductCreator.vue'
 import InventoryForecastCalculator from '@/components/InventoryForecastCalculator.vue'
+import { amazonApi } from '@/services/amazonApi'
 
 const tab = ref('products')
 const search = ref('')
 const csvFile = ref<File[]>([])
 const addProductDialog = ref(false)
 const productForm = ref(null)
+const syncing = ref(false)
+const syncStatus = ref<{ type: 'success' | 'error' | 'info'; message: string } | null>(null)
 
 const newProduct = ref({
   sku: '',
@@ -615,5 +631,48 @@ function addProduct() {
   })
 
   closeAddProductDialog()
+}
+
+async function syncWithAmazon() {
+  syncing.value = true
+  syncStatus.value = { type: 'info', message: 'Syncing with Amazon...' }
+
+  try {
+    const result = await amazonApi.syncProducts()
+
+    if (result.success && result.products.length > 0) {
+      // Replace products with synced data
+      products.value = result.products.map(p => ({
+        ...p,
+        asin: p.asin || '',
+        image: p.image || hayProductImage
+      }))
+
+      syncStatus.value = {
+        type: 'success',
+        message: `Successfully synced ${result.count} products from Amazon!`
+      }
+    } else {
+      syncStatus.value = {
+        type: 'info',
+        message: 'No credentials found. Using mock data. Add a .credentials file to sync with Amazon.'
+      }
+    }
+  } catch (error) {
+    console.error('Sync error:', error)
+    syncStatus.value = {
+      type: 'error',
+      message: 'Failed to sync with Amazon. Check console for details.'
+    }
+  } finally {
+    syncing.value = false
+
+    // Auto-hide success/info messages after 5 seconds
+    if (syncStatus.value?.type !== 'error') {
+      setTimeout(() => {
+        syncStatus.value = null
+      }, 5000)
+    }
+  }
 }
 </script>
