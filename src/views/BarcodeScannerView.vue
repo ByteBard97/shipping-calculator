@@ -1,7 +1,7 @@
 <template>
   <div class="scanner-fullscreen">
     <!-- Camera view fills entire screen -->
-    <video ref="videoElement" autoplay playsinline></video>
+    <video ref="videoElement" autoplay playsinline @click="handleTapToFocus"></video>
     <canvas ref="canvasElement" class="scanner-overlay"></canvas>
     <svg ref="overlayElement" class="detection-overlay">
       <polygon
@@ -10,6 +10,13 @@
         class="detection-box"
       />
     </svg>
+
+    <!-- Focus indicator -->
+    <div
+      v-if="focusIndicator"
+      class="focus-indicator"
+      :style="{ left: focusIndicator.x + 'px', top: focusIndicator.y + 'px' }"
+    ></div>
 
     <!-- Start button overlay when not scanning -->
     <div v-if="!isScanning" class="start-overlay">
@@ -36,6 +43,34 @@
     <div v-if="packages.length > 0" class="package-count">
       {{ packages.length }} scanned
     </div>
+
+    <!-- Debug panel -->
+    <div class="debug-panel">
+      <div class="debug-row">
+        <span class="debug-label">Camera:</span>
+        <span :class="['debug-value', isScanning ? 'status-active' : 'status-inactive']">
+          {{ isScanning ? 'Active' : 'Stopped' }}
+        </span>
+      </div>
+      <div class="debug-row">
+        <span class="debug-label">Scanning:</span>
+        <span :class="['debug-value', scanCount > 0 ? 'status-active' : '']">
+          {{ scanCount }} frames
+        </span>
+      </div>
+      <div class="debug-row">
+        <span class="debug-label">Last attempt:</span>
+        <span class="debug-value">{{ lastScanTime }}</span>
+      </div>
+      <div class="debug-row">
+        <span class="debug-label">Resolution:</span>
+        <span class="debug-value">{{ videoResolution }}</span>
+      </div>
+      <div class="debug-row">
+        <span class="debug-label">Focus mode:</span>
+        <span class="debug-value">{{ focusMode }}</span>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -56,9 +91,18 @@ const isScanning = ref(false)
 const lastScanned = ref<string>()
 const packages = ref<Package[]>([])
 const detectionPoints = ref<string>()
+const focusIndicator = ref<{ x: number; y: number }>()
+
+// Debug state
+const scanCount = ref(0)
+const lastScanTime = ref('Never')
+const videoResolution = ref('N/A')
+const focusMode = ref('N/A')
+
 const codeReader = new BrowserMultiFormatReader()
 let stream: MediaStream | null = null
 let scanInterval: number | null = null
+let videoTrack: MediaStreamTrack | null = null
 
 onMounted(() => {
   loadPackages()
@@ -71,12 +115,32 @@ onUnmounted(() => {
 async function startScanning() {
   try {
     stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: 'environment' } // Use rear camera on phones
+      video: {
+        facingMode: 'environment', // Use rear camera on phones
+        advanced: [{ focusMode: 'continuous' }] as any
+      }
     })
 
     if (videoElement.value) {
       videoElement.value.srcObject = stream
       isScanning.value = true
+
+      // Get video track for focus control
+      videoTrack = stream.getVideoTracks()[0]
+
+      // Update debug info
+      const settings = videoTrack.getSettings()
+      focusMode.value = (settings as any).focusMode || 'auto'
+
+      // Wait for video to load to get resolution
+      videoElement.value.addEventListener('loadedmetadata', () => {
+        if (videoElement.value) {
+          videoResolution.value = `${videoElement.value.videoWidth}x${videoElement.value.videoHeight}`
+        }
+      })
+
+      // Reset scan counter
+      scanCount.value = 0
 
       // Start scanning loop
       scanInterval = window.setInterval(async () => {
@@ -119,6 +183,11 @@ async function scanFrame() {
   if (!ctx) return
 
   ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+
+  // Update debug info
+  scanCount.value++
+  const now = new Date()
+  lastScanTime.value = now.toLocaleTimeString()
 
   try {
     const result = await codeReader.decodeFromImageElement(canvas as any)
@@ -180,6 +249,39 @@ function loadPackages() {
 
 function savePackages() {
   localStorage.setItem('scanned-packages', JSON.stringify(packages.value))
+}
+
+async function handleTapToFocus(event: MouseEvent) {
+  if (!videoTrack || !isScanning.value) return
+
+  const capabilities = videoTrack.getCapabilities() as any
+  if (!capabilities.focusMode || !capabilities.focusMode.includes('manual')) {
+    // Focus not supported, just show indicator briefly
+    showFocusIndicator(event.clientX, event.clientY)
+    return
+  }
+
+  try {
+    // Show focus indicator
+    showFocusIndicator(event.clientX, event.clientY)
+
+    // Apply focus at tap point
+    const settings = {
+      focusMode: 'manual',
+      focusDistance: 0 // Focus at tap point (0 = close, 1 = far)
+    }
+
+    await (videoTrack as any).applyConstraints({ advanced: [settings] })
+  } catch (error) {
+    console.log('Manual focus not supported on this device')
+  }
+}
+
+function showFocusIndicator(x: number, y: number) {
+  focusIndicator.value = { x, y }
+  setTimeout(() => {
+    focusIndicator.value = undefined
+  }, 1000)
 }
 
 </script>
@@ -339,5 +441,72 @@ video {
 @keyframes scaleIn {
   0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
   100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+.focus-indicator {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  animation: focusPulse 1s ease-out;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes focusPulse {
+  0% {
+    transform: translate(-50%, -50%) scale(1.5);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
+  }
+}
+
+.debug-panel {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.85);
+  color: #0f0;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  padding: 8px 12px;
+  border-top: 1px solid rgba(0, 255, 0, 0.3);
+}
+
+.debug-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.debug-row:last-child {
+  margin-bottom: 0;
+}
+
+.debug-label {
+  color: #888;
+  margin-right: 8px;
+}
+
+.debug-value {
+  color: #0f0;
+  font-weight: bold;
+}
+
+.status-active {
+  color: #0f0;
+}
+
+.status-inactive {
+  color: #f44336;
 }
 </style>
