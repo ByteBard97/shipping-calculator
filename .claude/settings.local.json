@@ -17,7 +17,9 @@
       "Bash(./scripts/convert-chatgpt-images.sh:*)",
       "Read(//home/geoff/Downloads/**)",
       "Bash(pkill:*)",
-      "Bash(npm run dev:*)"
+      "Bash(npm run dev:*)",
+      "Bash(gh run list:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []
