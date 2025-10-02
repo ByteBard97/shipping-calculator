@@ -11,7 +11,13 @@
       "WebFetch(domain:raw.githubusercontent.com)",
       "Read(//tmp/**)",
       "Bash(node:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(convert:*)",
+      "Bash(chmod:*)",
+      "Bash(./scripts/convert-chatgpt-images.sh:*)",
+      "Read(//home/geoff/Downloads/**)",
+      "Bash(pkill:*)",
+      "Bash(npm run dev:*)"
     ],
     "deny": [],
     "ask": []
