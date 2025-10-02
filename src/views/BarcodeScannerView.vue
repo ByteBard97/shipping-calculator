@@ -63,11 +63,17 @@
       </div>
       <div class="debug-row">
         <span class="debug-label">Resolution:</span>
-        <span class="debug-value">{{ videoResolution }}</span>
+        <span :class="['debug-value', videoResolution.includes('480') ? 'status-inactive' : 'status-active']">
+          {{ videoResolution }}
+        </span>
       </div>
       <div class="debug-row">
         <span class="debug-label">Focus mode:</span>
         <span class="debug-value">{{ focusMode }}</span>
+      </div>
+      <div v-if="availableResolutions" class="debug-row">
+        <span class="debug-label">Available:</span>
+        <span class="debug-value" style="font-size: 9px;">{{ availableResolutions }}</span>
       </div>
     </div>
   </div>
@@ -96,6 +102,7 @@ const scanCount = ref(0)
 const lastScanTime = ref('Never')
 const videoResolution = ref('N/A')
 const focusMode = ref('N/A')
+const availableResolutions = ref<string>()
 
 const codeReader = new BrowserMultiFormatReader()
 
@@ -113,11 +120,12 @@ onUnmounted(() => {
 
 async function startScanning() {
   try {
+    // Try to get highest resolution available
     stream = await navigator.mediaDevices.getUserMedia({
       video: {
         facingMode: 'environment', // Use rear camera on phones
-        width: { ideal: 1920 },
-        height: { ideal: 1080 }
+        width: { min: 640, ideal: 1920, max: 4096 },
+        height: { min: 480, ideal: 1080, max: 2160 }
       }
     })
 
@@ -131,6 +139,12 @@ async function startScanning() {
       // Update debug info
       const settings = videoTrack.getSettings()
       focusMode.value = (settings as any).focusMode || 'auto'
+
+      // Get available resolutions
+      const capabilities = videoTrack.getCapabilities() as any
+      if (capabilities.width && capabilities.height) {
+        availableResolutions.value = `${capabilities.width.min}-${capabilities.width.max}x${capabilities.height.min}-${capabilities.height.max}`
+      }
 
       // Wait for video to load to get resolution
       videoElement.value.addEventListener('loadedmetadata', () => {
