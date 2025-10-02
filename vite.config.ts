@@ -6,7 +6,14 @@ import { fileURLToPath, URL } from 'node:url'
 export default defineConfig({
   base: '/shipping-calculator/',
   build: {
-    outDir: 'docs'
+    outDir: 'docs',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'mermaid': ['mermaid']
+        }
+      }
+    }
   },
   plugins: [
     vue(),
