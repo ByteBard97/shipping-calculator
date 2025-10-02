@@ -20,6 +20,8 @@
     "vuetify": "^3.7.5"
   },
   "devDependencies": {
+    "@tauri-apps/api": "^2.8.0",
+    "@tauri-apps/cli": "^2.8.4",
     "@types/papaparse": "^5.3.14",
     "@vitejs/plugin-vue": "^5.2.1",
     "sass": "^1.83.4",

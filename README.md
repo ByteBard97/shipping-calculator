@@ -132,6 +132,92 @@ npm run build
 # Upload docs/ folder to your provider
 ```
 
+---
+
+## Amazon Seller Portal - Setup for Joseph
+
+### Quick Start (Windows)
+
+#### One-Time Setup
+
+1. **Install Node.js** (if you haven't already):
+   - Download from: https://nodejs.org/
+   - Get the LTS version (Long Term Support)
+   - Install with default options
+
+2. **Install Dependencies**:
+   - Open this folder in File Explorer
+   - Right-click in an empty space → "Open in Terminal" (or use Command Prompt)
+   - Run: `npm install`
+   - Wait for it to finish (this downloads all the code libraries needed)
+
+3. **Add Your Amazon Credentials**:
+   - Create a new file in this folder called `.credentials`
+   - Paste this into it:
+   ```json
+   {
+     "clientId": "your-amazon-client-id-here",
+     "clientSecret": "your-amazon-client-secret-here",
+     "refreshToken": "your-amazon-refresh-token-here"
+   }
+   ```
+   - Replace the placeholder values with your actual Amazon SP-API credentials
+   - Save the file
+   - **Important**: This file stays on YOUR computer only - it's never uploaded anywhere
+
+#### Running the App
+
+**Just double-click `start.bat`**
+
+That's it! The app will:
+- Start the server
+- Open in your browser automatically
+- Be ready to use in about 5 seconds
+
+#### Stopping the App
+
+Close the command prompt window that appears, or press Ctrl+C in the terminal.
+
+### What You Can Do
+
+- **Products Tab**: Manage your product listings
+- **Analytics & Tools Tab**: This is where the magic happens!
+  - **Profit Margin Calculator**: See exactly what you make after all Amazon fees
+  - **Competitor Price Tracker**: Compare your prices to competitors
+  - **Seasonal Pricing**: Get pricing recommendations by season
+  - **Bundle Creator**: Create product bundles with automatic pricing
+  - **Inventory Forecast**: Know exactly when to reorder
+
+### Your Credentials Are Safe
+
+- The `.credentials` file only exists on YOUR computer
+- It's in the `.gitignore` file (Git ignores it)
+- It will NEVER be uploaded to GitHub or anywhere else
+- Only you can access it
+
+### Need Help?
+
+If something doesn't work:
+1. Make sure you ran `npm install` first
+2. Check that Node.js is installed (`node --version` in terminal)
+3. Verify your `.credentials` file is in the right place and has valid JSON
+4. Make sure port 5173 isn't already in use
+
+### Making It Even Easier (Optional)
+
+**Create a Desktop Shortcut:**
+1. Right-click `start.bat`
+2. Click "Create shortcut"
+3. Drag the shortcut to your Desktop
+4. Now you can launch it from your Desktop like any other app!
+
+**Bonus**: You can even change the shortcut's icon:
+1. Right-click the shortcut → Properties
+2. Click "Change Icon"
+3. Pick something that looks like a business/Amazon icon
+
+---
+
 ## License
 
 MIT
