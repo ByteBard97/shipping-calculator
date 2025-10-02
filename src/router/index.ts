@@ -23,6 +23,11 @@ const router = createRouter({
       path: '/settings',
       name: 'settings',
       component: () => import('@/views/SettingsView.vue')
+    },
+    {
+      path: '/scanner',
+      name: 'scanner',
+      component: () => import('@/views/BarcodeScannerView.vue')
     }
   ]
 })

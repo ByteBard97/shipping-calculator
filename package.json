@@ -9,21 +9,22 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "vue": "^3.5.13",
-    "vue-router": "^4.5.0",
-    "pinia": "^2.3.0",
-    "vuetify": "^3.7.5",
+    "@mdi/font": "^7.4.47",
+    "@zxing/library": "^0.21.3",
     "maplibre-gl": "^4.7.1",
     "papaparse": "^5.4.1",
-    "@mdi/font": "^7.4.47"
+    "pinia": "^2.3.0",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0",
+    "vuetify": "^3.7.5"
   },
   "devDependencies": {
+    "@types/papaparse": "^5.3.14",
     "@vitejs/plugin-vue": "^5.2.1",
+    "sass": "^1.83.4",
     "typescript": "~5.6.2",
     "vite": "^6.0.5",
-    "vue-tsc": "^2.2.0",
-    "@types/papaparse": "^5.3.14",
     "vite-plugin-vuetify": "^2.0.4",
-    "sass": "^1.83.4"
+    "vue-tsc": "^2.2.0"
   }
 }

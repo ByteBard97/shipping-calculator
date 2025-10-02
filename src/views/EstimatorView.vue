@@ -27,6 +27,18 @@
           <v-btn size="small" variant="text" @click="resetZones" class="ml-2">Reset</v-btn>
         </div>
       </v-alert>
+
+      <!-- Scanner quick access button -->
+      <v-btn
+        to="/scanner"
+        color="primary"
+        size="large"
+        class="scanner-fab"
+        icon
+        elevation="8"
+      >
+        <v-icon>mdi-barcode-scan</v-icon>
+      </v-btn>
     </div>
 
     <!-- Floating form panel (draggable) -->
@@ -195,5 +207,12 @@ function getZoneName(zoneId: string): string {
 .form-panel :deep(.v-card-text) {
   max-height: calc(100vh - 200px);
   overflow-y: auto;
+}
+
+.scanner-fab {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  z-index: 10;
 }
 </style>

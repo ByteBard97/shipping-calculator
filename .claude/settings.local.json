@@ -10,7 +10,8 @@
       "WebFetch(domain:www.census.gov)",
       "WebFetch(domain:raw.githubusercontent.com)",
       "Read(//tmp/**)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(npm install:*)"
     ],
     "deny": [],
     "ask": []
