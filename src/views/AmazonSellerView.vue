@@ -29,6 +29,7 @@
           <v-tab value="products">Products</v-tab>
           <v-tab value="variations">Variation Builder</v-tab>
           <v-tab value="import">CSV Import</v-tab>
+          <v-tab value="analytics">Analytics & Tools</v-tab>
           <v-tab value="aplus">A+ Content</v-tab>
           <v-tab value="store">Store Manager</v-tab>
         </v-tabs>
@@ -205,6 +206,63 @@
                     </v-list>
                   </v-card-text>
                 </v-card>
+              </v-card-text>
+            </v-window-item>
+
+            <!-- Analytics & Tools Tab -->
+            <v-window-item value="analytics">
+              <v-card-text>
+                <v-expansion-panels variant="accordion" multiple>
+                  <v-expansion-panel>
+                    <v-expansion-panel-title>
+                      <v-icon class="mr-2">mdi-calculator-variant</v-icon>
+                      Profit Margin Calculator
+                    </v-expansion-panel-title>
+                    <v-expansion-panel-text>
+                      <ProfitMarginCalculator />
+                    </v-expansion-panel-text>
+                  </v-expansion-panel>
+
+                  <v-expansion-panel>
+                    <v-expansion-panel-title>
+                      <v-icon class="mr-2">mdi-chart-line</v-icon>
+                      Competitor Price Tracker
+                    </v-expansion-panel-title>
+                    <v-expansion-panel-text>
+                      <CompetitorPriceTracker />
+                    </v-expansion-panel-text>
+                  </v-expansion-panel>
+
+                  <v-expansion-panel>
+                    <v-expansion-panel-title>
+                      <v-icon class="mr-2">mdi-calendar-star</v-icon>
+                      Seasonal Pricing Suggestions
+                    </v-expansion-panel-title>
+                    <v-expansion-panel-text>
+                      <SeasonalPricingSuggestions />
+                    </v-expansion-panel-text>
+                  </v-expansion-panel>
+
+                  <v-expansion-panel>
+                    <v-expansion-panel-title>
+                      <v-icon class="mr-2">mdi-package-variant-closed</v-icon>
+                      Bundle Product Creator
+                    </v-expansion-panel-title>
+                    <v-expansion-panel-text>
+                      <BundleProductCreator />
+                    </v-expansion-panel-text>
+                  </v-expansion-panel>
+
+                  <v-expansion-panel>
+                    <v-expansion-panel-title>
+                      <v-icon class="mr-2">mdi-chart-timeline-variant</v-icon>
+                      Inventory Forecast
+                    </v-expansion-panel-title>
+                    <v-expansion-panel-text>
+                      <InventoryForecastCalculator />
+                    </v-expansion-panel-text>
+                  </v-expansion-panel>
+                </v-expansion-panels>
               </v-card-text>
             </v-window-item>
 
@@ -425,6 +483,11 @@
 import { ref } from 'vue'
 import hayProductImage from '/hay-product.webp'
 import hayHavenProductImage from '/hay-haven-product.webp'
+import ProfitMarginCalculator from '@/components/ProfitMarginCalculator.vue'
+import CompetitorPriceTracker from '@/components/CompetitorPriceTracker.vue'
+import SeasonalPricingSuggestions from '@/components/SeasonalPricingSuggestions.vue'
+import BundleProductCreator from '@/components/BundleProductCreator.vue'
+import InventoryForecastCalculator from '@/components/InventoryForecastCalculator.vue'
 
 const tab = ref('products')
 const search = ref('')
